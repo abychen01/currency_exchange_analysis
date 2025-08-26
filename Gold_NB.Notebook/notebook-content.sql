@@ -39,7 +39,7 @@ ELSE
     select 'doesnt exist'
     CREATE TABLE GOLD_WH.dbo.gold_data (
         currency_combined VARCHAR(6) NOT NULL,
-        exchange_rate DECIMAL(10, 5) NOT NULL,  
+        exchange_rate DECIMAL(20, 9) NOT NULL,  
         ingestion_date DATE NOT NULL,
         source_date_utc DATETIME2(3) NOT NULL,
         base_currency VARCHAR(3) NOT NULL,
@@ -183,7 +183,8 @@ HAVING COUNT(*) > 1;
 
 
 */
- 
+
+
 
 
 
