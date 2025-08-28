@@ -186,7 +186,19 @@ HAVING COUNT(*) > 1;
 
 
 
+select * from silver_WH.dbo.silver_data order by source_date_utc asc
+select * from Gold_WH.dbo.gold_data order by source_date_utc asc 
+select count(*) from Gold_WH.dbo.gold_data where is_current = 1
 
+SELECT *
+FROM gold_data
+WHERE is_current = 1
+
+SELECT currency_combined, COUNT(*) AS cnt
+FROM gold_data
+WHERE is_current = 1
+GROUP BY currency_combined
+HAVING COUNT(*) > 1;
 
 -- METADATA ********************
 
