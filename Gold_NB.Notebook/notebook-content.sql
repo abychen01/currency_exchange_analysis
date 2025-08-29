@@ -8,7 +8,7 @@
 -- META   },
 -- META   "dependencies": {
 -- META     "warehouse": {
--- META       "default_warehouse": "c3fa419b-3781-abb9-4e95-5b5dbc13e465",
+-- META       "default_warehouse": "2ebe39ba-663c-8c6c-44e2-10d6c1ce850a",
 -- META       "known_warehouses": [
 -- META         {
 -- META           "id": "c3fa419b-3781-abb9-4e95-5b5dbc13e465",
@@ -16,6 +16,10 @@
 -- META         },
 -- META         {
 -- META           "id": "e40536ea-e4b1-b6b8-4ea5-18784c353c59",
+-- META           "type": "Datawarehouse"
+-- META         },
+-- META         {
+-- META           "id": "2ebe39ba-663c-8c6c-44e2-10d6c1ce850a",
 -- META           "type": "Datawarehouse"
 -- META         }
 -- META       ]
@@ -81,6 +85,8 @@ FROM (
 ) t
 WHERE rn = 1;
 */
+
+
 
 -- METADATA ********************
 
@@ -185,20 +191,6 @@ HAVING COUNT(*) > 1;
 */
 
 
-
-select * from silver_WH.dbo.silver_data order by source_date_utc asc
-select * from Gold_WH.dbo.gold_data order by source_date_utc asc 
-select count(*) from Gold_WH.dbo.gold_data where is_current = 1
-
-SELECT *
-FROM gold_data
-WHERE is_current = 1
-
-SELECT currency_combined, COUNT(*) AS cnt
-FROM gold_data
-WHERE is_current = 1
-GROUP BY currency_combined
-HAVING COUNT(*) > 1;
 
 -- METADATA ********************
 

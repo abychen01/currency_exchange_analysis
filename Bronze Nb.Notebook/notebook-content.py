@@ -28,7 +28,7 @@ from com.microsoft.spark.fabric.Constants import Constants
 from pprint import pprint
 from pyspark.sql.functions import col, length, substring, lit
 from pyspark.sql.types import StructField, StructType, DoubleType, StringType, DateType, IntegerType
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 # METADATA ********************
 
