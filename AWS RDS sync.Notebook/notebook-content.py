@@ -40,20 +40,26 @@ from pyspark.sql.window import Window
 df2 = spark.read.parquet("Files/creds")
 password = df2.collect()[0]["password"]
 
-jdbc_url = "jdbc:sqlserver://fabric-rds-sql-server.cxm8ga0awaka.eu-north-1.rds.amazonaws.com:\
-            1433;databaseName=sql_project;encrypt=true;trustServerCertificate=true"
+db = "currency_exchange_analysis"
+
+jdbc_url = f"jdbc:sqlserver://myfreesqldbserver66.database.windows.net:1433;" \
+           f"databaseName={db};" \
+           "encrypt=true;" \
+           "trustServerCertificate=false;" \
+           "hostNameInCertificate=*.database.windows.net;" \
+           "loginTimeout=30;"
 
 jdbc_properties = {
-    "user": "admin",
+    "user": "admin2",
     "password": password,
     "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 }
 
 conn_str_master = (
             f"DRIVER={{ODBC Driver 18 for SQL Server}};"
-            f"SERVER=fabric-rds-sql-server.cxm8ga0awaka.eu-north-1.rds.amazonaws.com,1433;"
+            f"SERVER=tcp:myfreesqldbserver66.database.windows.net,1433;"
             f"DATABASE=master;"
-            f"UID=admin;"
+            f"UID=admin2;"
             f"PWD={password};"
             f"Encrypt=yes;"
             f"TrustServerCertificate=yes;"
@@ -62,14 +68,15 @@ conn_str_master = (
         
 conn_str = (
             f"DRIVER={{ODBC Driver 18 for SQL Server}};"
-            f"SERVER=fabric-rds-sql-server.cxm8ga0awaka.eu-north-1.rds.amazonaws.com,1433;"
-            f"DATABASE=sql_project;"
-            f"UID=admin;"
+            f"SERVER=tcp:myfreesqldbserver66.database.windows.net,1433;"
+            f"DATABASE={db};"
+            f"UID=admin2;"
             f"PWD={password};"
             f"Encrypt=yes;"
             f"TrustServerCertificate=yes;"
             f"Connect Timeout=30;"
         )
+
 
 
 
@@ -97,7 +104,7 @@ try:
                                 SELECT '' + ? + ' created'
                                 END
 
-            ""","sql_project","sql_project","sql_project","sql_project","sql_project")
+            """,db,db,db,db,db)
             
             while True:
                 result = cursor.fetchone()
@@ -168,6 +175,41 @@ except Exception as e:
 
 # CELL ********************
 
+#first run
+'''
+df = spark.read.table("gold_data")
+
+
+try:
+        df.write \
+            .format("jdbc") \
+            .option("url", jdbc_url) \
+            .option("dbtable", table) \
+            .option("user", jdbc_properties["user"]) \
+            .option("password", jdbc_properties["password"]) \
+            .option("driver", jdbc_properties["driver"]) \
+            .option("batchsize", 1000) \
+            .mode("append") \
+            .save()
+        print(f"Successfully wrote data to RDS table [{table}].")
+
+except Exception as e:
+    print(f"Failed to write to RDS: {e}")
+    raise
+
+'''
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+
+
 df = spark.read.table("gold_data")
 w = Window.partitionBy(col("currency_combined")).orderBy(col("source_date_utc"))
 
@@ -190,6 +232,8 @@ try:
 except Exception as e:
     print(f"Failed to write to RDS: {e}")
     raise
+
+
 
 # METADATA ********************
 
