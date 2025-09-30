@@ -76,7 +76,7 @@
           "secureInput": false,
           "secureOutput": false
         },
-        "name": "AWS RDS sync",
+        "name": "SQL Server sync",
         "dependsOn": [
           {
             "activity": "Gold",

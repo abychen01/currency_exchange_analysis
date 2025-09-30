@@ -198,3 +198,37 @@ HAVING COUNT(*) > 1;
 -- META   "language": "sql",
 -- META   "language_group": "sqldatawarehouse"
 -- META }
+
+-- CELL ********************
+
+select * from silver_WH.dbo.silver_data order by source_date_utc asc
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- CELL ********************
+
+select * from Gold_WH.dbo.gold_data 
+order by is_current DESC
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }
+
+-- CELL ********************
+
+
+-- METADATA ********************
+
+-- META {
+-- META   "language": "sql",
+-- META   "language_group": "sqldatawarehouse"
+-- META }

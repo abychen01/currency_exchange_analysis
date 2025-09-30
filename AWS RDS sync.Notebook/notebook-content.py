@@ -187,16 +187,11 @@ except Exception as e:
 # META   "language_group": "synapse_pyspark"
 # META }
 
-# MARKDOWN ********************
-
-# ##### First run - all data gets saved to SQL server
-
 # CELL ********************
 
-#first run
-'''
-df = spark.read.table("gold_data")
 
+
+df = spark.read.table("gold_data")
 
 try:
         df.write \
@@ -207,43 +202,7 @@ try:
             .option("password", jdbc_properties["password"]) \
             .option("driver", jdbc_properties["driver"]) \
             .option("batchsize", 1000) \
-            .mode("append") \
-            .save()
-        print(f"Successfully wrote data to RDS table [{table}].")
-
-except Exception as e:
-    print(f"Failed to write to RDS: {e}")
-    raise
-
-'''
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-
-
-df = spark.read.table("gold_data")
-w = Window.partitionBy(col("currency_combined")).orderBy(desc(col("source_date_utc")))
-
-df = df.withColumn("rn", row_number().over(w)).filter(col("rn")==1).drop("rn")
-
-
-try:
-        df.write \
-            .format("jdbc") \
-            .option("url", jdbc_url) \
-            .option("dbtable", table) \
-            .option("user", jdbc_properties["user"]) \
-            .option("password", jdbc_properties["password"]) \
-            .option("driver", jdbc_properties["driver"]) \
-            .option("batchsize", 1000) \
-            .mode("append") \
+            .mode("overwrite") \
             .save()
         print(f"Successfully wrote data to RDS table [{table}].")
 
@@ -293,23 +252,13 @@ except Exception as e:
 
 # CELL ********************
 
-df = spark.read.table("gold_data")
-#display(df.sort(asc(col("source_date_utc"))))
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
+'''
 w = Window.partitionBy(col("currency_combined")).orderBy(desc(col("source_date_utc")))
 display(w)
 df = df.withColumn("rn", row_number().over(w)).filter(col("rn")==1)
 display(df)
 #display(df.where(col("is_current")==True))
+'''
 
 # METADATA ********************
 
