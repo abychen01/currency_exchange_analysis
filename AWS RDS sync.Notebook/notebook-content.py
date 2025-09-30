@@ -20,10 +20,14 @@
 # META   }
 # META }
 
+# MARKDOWN ********************
+
+# ##### Imports
+
 # CELL ********************
 
 import pyodbc
-from pyspark.sql.functions import col, desc, row_number
+from pyspark.sql.functions import col, desc, row_number, asc
 from pyspark.sql.window import Window
 #from pyspark.sql import functions as f
 
@@ -34,6 +38,10 @@ from pyspark.sql.window import Window
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# ##### Declarations
 
 # CELL ********************
 
@@ -87,6 +95,10 @@ conn_str = (
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# ##### DB check
+
 # CELL ********************
 
 try:
@@ -100,11 +112,9 @@ try:
                             ELSE
                                 BEGIN
                                 SELECT '' + ? + ' doesnt exist'
-                                EXEC('CREATE DATABASE ' + ?)
-                                SELECT '' + ? + ' created'
                                 END
 
-            """,db,db,db,db,db)
+            """,db,db,db)
             
             while True:
                 result = cursor.fetchone()
@@ -122,6 +132,10 @@ except Exception as e:
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# ##### Table check/create
 
 # CELL ********************
 
@@ -173,6 +187,10 @@ except Exception as e:
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# ##### First run - all data gets saved to SQL server
+
 # CELL ********************
 
 #first run
@@ -211,7 +229,7 @@ except Exception as e:
 
 
 df = spark.read.table("gold_data")
-w = Window.partitionBy(col("currency_combined")).orderBy(col("source_date_utc"))
+w = Window.partitionBy(col("currency_combined")).orderBy(desc(col("source_date_utc")))
 
 df = df.withColumn("rn", row_number().over(w)).filter(col("rn")==1).drop("rn")
 
@@ -242,6 +260,10 @@ except Exception as e:
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# ##### Testing
+
 # CELL ********************
 
 #TESTING...
@@ -261,6 +283,43 @@ except Exception as e:
 
 
 '''
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+df = spark.read.table("gold_data")
+#display(df.sort(asc(col("source_date_utc"))))
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+w = Window.partitionBy(col("currency_combined")).orderBy(desc(col("source_date_utc")))
+display(w)
+df = df.withColumn("rn", row_number().over(w)).filter(col("rn")==1)
+display(df)
+#display(df.where(col("is_current")==True))
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
 
 # METADATA ********************
 
