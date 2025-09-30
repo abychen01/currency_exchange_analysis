@@ -26,8 +26,7 @@ The pipeline follows a medallion architecture:
 
 Data flows through Fabric's Lakehouse/Warehouse, using PySpark for ETL and SQL for transformations.
 
-![Pipeline Flow](https://via.placeholder.com/800x200?text=Pipeline+Screenshot+Placeholder)  
-*(Replace with actual screenshot of the Fabric pipeline showing sequential activities: Bronze_NB → Silver_NB → Gold_NB → SQL_Server_sync.)*
+<img width="1414" alt="image" src="https://github.com/abychen01/currency_exchange_analysis/blob/99ad96f47872f0dea63752c2a36bd411802283af/CE%20Pipeline.png" />
 
 ## Notebooks
 The repository includes four Jupyter notebooks (`.ipynb`) that form the core of the pipeline. Each handles a specific stage and is executed sequentially in Microsoft Fabric.
