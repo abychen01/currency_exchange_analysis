@@ -86,8 +86,6 @@ FROM (
 WHERE rn = 1;
 */
 
-
-
 -- METADATA ********************
 
 -- META {
