@@ -187,6 +187,23 @@ except Exception as e:
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# ##### Write
+
+# CELL ********************
+
+#df = spark.sql('SELECT * FROM Gold_WH.dbo.gold_data')
+df = spark.read.synapsesql("Gold_WH.dbo.gold_data")
+display(df)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
 # CELL ********************
 
 
