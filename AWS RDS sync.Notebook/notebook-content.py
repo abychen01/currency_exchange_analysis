@@ -26,11 +26,12 @@
 
 # CELL ********************
 
-import pyodbc
+import pyodbc,os
 from pyspark.sql.functions import col, desc, row_number, asc
 from pyspark.sql.window import Window
-#from pyspark.sql import functions as f
 
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
 # METADATA ********************
 
@@ -45,8 +46,32 @@ from pyspark.sql.window import Window
 
 # CELL ********************
 
-df2 = spark.read.parquet("Files/creds")
-password = df2.collect()[0]["password"]
+df_creds = spark.read.parquet('Files/creds')
+
+os.environ["AZURE_CLIENT_ID"] = df_creds.collect()[0]["AZURE_CLIENT_ID"]
+os.environ["AZURE_TENANT_ID"] = df_creds.collect()[0]["AZURE_TENANT_ID"]
+os.environ["AZURE_CLIENT_SECRET"] = df_creds.collect()[0]["AZURE_CLIENT_SECRET"]
+
+
+vault_url = "https://vaultforfabric.vault.azure.net/"
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=vault_url, credential=credential)
+
+password = client.get_secret("sql-server-password").value
+
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# MARKDOWN ********************
+
+# #### DB defs
+
+# CELL ********************
 
 db = "currency_exchange_analysis"
 
@@ -84,7 +109,6 @@ conn_str = (
             f"TrustServerCertificate=yes;"
             f"Connect Timeout=30;"
         )
-
 
 
 
@@ -194,8 +218,11 @@ except Exception as e:
 # CELL ********************
 
 #df = spark.sql('SELECT * FROM Gold_WH.dbo.gold_data')
+'''
 df = spark.read.synapsesql("Gold_WH.dbo.gold_data")
 display(df)
+
+'''
 
 # METADATA ********************
 
@@ -211,17 +238,24 @@ display(df)
 df = spark.read.table("gold_data")
 
 try:
-        df.write \
-            .format("jdbc") \
-            .option("url", jdbc_url) \
-            .option("dbtable", table) \
-            .option("user", jdbc_properties["user"]) \
-            .option("password", jdbc_properties["password"]) \
-            .option("driver", jdbc_properties["driver"]) \
-            .option("batchsize", 1000) \
-            .mode("overwrite") \
-            .save()
-        print(f"Successfully wrote data to RDS table [{table}].")
+
+    with pyodbc.connect(conn_str,autocommit=True) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(""" 
+
+            """)
+
+    df.write \
+        .format("jdbc") \
+        .option("url", jdbc_url) \
+        .option("dbtable", table) \
+        .option("user", jdbc_properties["user"]) \
+        .option("password", jdbc_properties["password"]) \
+        .option("driver", jdbc_properties["driver"]) \
+        .option("batchsize", 1000) \
+        .mode("overwrite") \
+        .save()
+    print(f"Successfully wrote data to RDS table [{table}].")
 
 except Exception as e:
     print(f"Failed to write to RDS: {e}")
