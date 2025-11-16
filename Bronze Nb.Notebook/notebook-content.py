@@ -69,8 +69,6 @@ credential = DefaultAzureCredential()
 client = SecretClient(vault_url=vault_url, credential=credential)
 
 api_key = client.get_secret("exhange-rate-host-api").value
-api_secret = client.get_secret("exhange-rate-host-api-password").value
-
 
 # METADATA ********************
 
