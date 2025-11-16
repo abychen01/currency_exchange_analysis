@@ -217,48 +217,24 @@ except Exception as e:
 
 # CELL ********************
 
-#df = spark.sql('SELECT * FROM Gold_WH.dbo.gold_data')
-'''
-df = spark.read.synapsesql("Gold_WH.dbo.gold_data")
-display(df)
-
-'''
-
-df = spark.read.snapsql("Gold_WH.dbo.gold_data")
-display(df)
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-
-
-df = spark.read.table("gold_data")
-
 try:
 
     with pyodbc.connect(conn_str,autocommit=True) as conn:
         with conn.cursor() as cursor:
-            cursor.execute(""" 
-
+            cursor.execute("""
+                                select top 1 source_date_utc from [dbo].[currency_exchange_data]
+                                order by source_date_utc desc 
             """)
+            
+            latest_date = cursor.fetchall()[0][0]
+            print((latest_date))
 
-    df.write \
-        .format("jdbc") \
-        .option("url", jdbc_url) \
-        .option("dbtable", table) \
-        .option("user", jdbc_properties["user"]) \
-        .option("password", jdbc_properties["password"]) \
-        .option("driver", jdbc_properties["driver"]) \
-        .option("batchsize", 1000) \
-        .mode("overwrite") \
-        .save()
-    print(f"Successfully wrote data to RDS table [{table}].")
+
+    df = spark.read.table("gold_data").where(col('source_date_utc') > latest_date)
+    print(df.count())
+    display(df.sort(desc(col('source_date_utc'))))
+
+
 
 except Exception as e:
     print(f"Failed to write to RDS: {e}")
@@ -295,7 +271,22 @@ except Exception as e:
     print(e)
 
 
+
+    df.write \
+        .format("jdbc") \
+        .option("url", jdbc_url) \
+        .option("dbtable", table) \
+        .option("user", jdbc_properties["user"]) \
+        .option("password", jdbc_properties["password"]) \
+        .option("driver", jdbc_properties["driver"]) \
+        .option("batchsize", 1000) \
+        .mode("append") \
+        .save()
+    print(f"Successfully wrote data to RDS table [{table}].")
+
 '''
+
+
 
 # METADATA ********************
 
