@@ -21,6 +21,10 @@
 # META   }
 # META }
 
+# MARKDOWN ********************
+
+# #### Imports
+
 # CELL ********************
 
 import requests, json, com.microsoft.spark.fabric, os
@@ -39,6 +43,10 @@ from azure.keyvault.secrets import SecretClient
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# MARKDOWN ********************
+
+# #### Defs
 
 # CELL ********************
 
@@ -62,6 +70,10 @@ schema = StructType([
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# #### Vault call
+
 # CELL ********************
 
 vault_url = "https://vaultforfabric.vault.azure.net/"
@@ -77,6 +89,10 @@ api_key = client.get_secret("exhange-rate-host-api").value
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# #### API call
+
 # CELL ********************
 
 try:
@@ -86,19 +102,12 @@ try:
 except Exception as e:
     print(e)
 
-# METADATA ********************
 
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
 
-# CELL ********************
+data = response.json()['quotes']                # rates data 
+timestamp = response.json()['timestamp']        # timestamp of response
 
-data = response.json()['quotes']
-timestamp = response.json()['timestamp']
-
-data_list = [(k,float(v),date.today(),timestamp) for k,v in data.items()]
+data_list = [(k,float(v),date.today(),timestamp) for k,v in data.items()]      
 
 
 df = spark.createDataFrame(data_list,schema=schema)

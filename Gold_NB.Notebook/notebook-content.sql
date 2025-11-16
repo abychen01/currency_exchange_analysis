@@ -11,15 +11,11 @@
 -- META       "default_warehouse": "2ebe39ba-663c-8c6c-44e2-10d6c1ce850a",
 -- META       "known_warehouses": [
 -- META         {
--- META           "id": "c3fa419b-3781-abb9-4e95-5b5dbc13e465",
--- META           "type": "Datawarehouse"
--- META         },
--- META         {
--- META           "id": "e40536ea-e4b1-b6b8-4ea5-18784c353c59",
--- META           "type": "Datawarehouse"
--- META         },
--- META         {
 -- META           "id": "2ebe39ba-663c-8c6c-44e2-10d6c1ce850a",
+-- META           "type": "Datawarehouse"
+-- META         },
+-- META         {
+-- META           "id": "cd728ae3-4698-88e9-4e42-8b1f1f7040e2",
 -- META           "type": "Datawarehouse"
 -- META         }
 -- META       ]
@@ -29,7 +25,7 @@
 
 -- MARKDOWN ********************
 
--- Table creation
+-- #### Table creation
 
 -- CELL ********************
 
@@ -68,23 +64,22 @@ ELSE
 
 -- MARKDOWN ********************
 
--- Silver view
+-- #### Silver view
 
 -- CELL ********************
 
-/*
-DROP VIEW IF EXISTS silver
-GO
-
-CREATE VIEW silver AS
+CREATE OR ALTER VIEW silver AS
 SELECT *
 FROM (
-    SELECT s.*,
-           ROW_NUMBER() OVER (PARTITION BY currency_combined ORDER BY source_date_utc DESC) AS rn
-    FROM Silver_WH.dbo.silver_data s
-) t
+    SELECT 
+        s.*,
+        ROW_NUMBER() OVER (
+            PARTITION BY currency_combined 
+            ORDER BY source_date_utc DESC
+        ) AS rn
+    FROM Silver_WH.dbo.silver_data AS s
+) AS t
 WHERE rn = 1;
-*/
 
 -- METADATA ********************
 

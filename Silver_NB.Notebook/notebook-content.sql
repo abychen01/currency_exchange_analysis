@@ -95,8 +95,16 @@ insert into Silver_WH.dbo.silver_data
 
 -- CELL ********************
 
-select * from Silver_WH.dbo.silver_data where currency_combined = 'USDCAD' OR currency_combined = 'USDINR'
-select count(*) from silver_data
+select 
+    * 
+from 
+    Silver_WH.dbo.silver_data 
+where 
+    currency_combined = 'USDCAD' 
+    OR
+    currency_combined = 'USDINR'
+
+
 
 -- METADATA ********************
 
