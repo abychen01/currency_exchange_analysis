@@ -231,11 +231,21 @@ try:
 
 
     df = spark.read.table("gold_data").where(col('source_date_utc') > latest_date)
-    print(df.count())
-    display(df.sort(desc(col('source_date_utc'))))
 
 
-
+    df.write \
+        .format("jdbc") \
+        .option("url", jdbc_url) \
+        .option("dbtable", table) \
+        .option("user", jdbc_properties["user"]) \
+        .option("password", jdbc_properties["password"]) \
+        .option("driver", jdbc_properties["driver"]) \
+        .option("batchsize", 1000) \
+        .mode("append") \
+        .save()
+        
+    print(f"Successfully wrote data to RDS table [{table}].")
+    
 except Exception as e:
     print(f"Failed to write to RDS: {e}")
     raise
@@ -272,17 +282,6 @@ except Exception as e:
 
 
 
-    df.write \
-        .format("jdbc") \
-        .option("url", jdbc_url) \
-        .option("dbtable", table) \
-        .option("user", jdbc_properties["user"]) \
-        .option("password", jdbc_properties["password"]) \
-        .option("driver", jdbc_properties["driver"]) \
-        .option("batchsize", 1000) \
-        .mode("append") \
-        .save()
-    print(f"Successfully wrote data to RDS table [{table}].")
 
 '''
 
