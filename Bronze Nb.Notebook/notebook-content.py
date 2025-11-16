@@ -23,12 +23,15 @@
 
 # CELL ********************
 
-import requests, json, com.microsoft.spark.fabric
+import requests, json, com.microsoft.spark.fabric, os
 from com.microsoft.spark.fabric.Constants import Constants
 from pprint import pprint
 from pyspark.sql.functions import col, length, substring, lit
 from pyspark.sql.types import StructField, StructType, DoubleType, StringType, DateType, IntegerType
 from datetime import datetime, date, timedelta
+
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 
 # METADATA ********************
 
@@ -39,8 +42,11 @@ from datetime import datetime, date, timedelta
 
 # CELL ********************
 
-df_api = spark.read.parquet("Files/creds")
-api_key = df_api.collect()[0]['api']
+df_creds = spark.read.parquet("Files/creds")
+
+os.environ["AZURE_CLIENT_ID"] = df_creds.collect()[0]["AZURE_CLIENT_ID"]
+os.environ["AZURE_TENANT_ID"] = df_creds.collect()[0]["AZURE_TENANT_ID"]
+os.environ["AZURE_CLIENT_SECRET"] = df_creds.collect()[0]["AZURE_CLIENT_SECRET"]
 
 schema = StructType([
     StructField("currency_combined",StringType(), False),
@@ -48,6 +54,23 @@ schema = StructType([
     StructField("ingestion_date",DateType(), False),
     StructField("source_date",IntegerType(), False),
 ])
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+vault_url = "https://vaultforfabric.vault.azure.net/"
+credential = DefaultAzureCredential()
+client = SecretClient(vault_url=vault_url, credential=credential)
+
+api_key = client.get_secret("exhange-rate-host-api").value
+api_secret = client.get_secret("exhange-rate-host-api-password").value
+
 
 # METADATA ********************
 
