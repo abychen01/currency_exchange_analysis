@@ -224,6 +224,9 @@ display(df)
 
 '''
 
+df = spark.read.snapsql("Gold_WH.dbo.gold_data")
+display(df)
+
 # METADATA ********************
 
 # META {
