@@ -66,8 +66,8 @@
       {
         "type": "TridentNotebook",
         "typeProperties": {
-          "notebookId": "62aad1c4-2e5f-8a75-42dd-47abfd89bdea",
-          "workspaceId": "00000000-0000-0000-0000-000000000000"
+          "notebookId": "2b93e225-fa7a-4e3e-b781-d84c6b174569",
+          "workspaceId": "2410a0ef-6484-4131-aad4-3c70feee320e"
         },
         "policy": {
           "timeout": "0.12:00:00",
@@ -77,6 +77,8 @@
           "secureOutput": false
         },
         "name": "SQL Server sync",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
         "dependsOn": [
           {
             "activity": "Gold",
