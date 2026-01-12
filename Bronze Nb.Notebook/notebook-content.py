@@ -70,28 +70,22 @@ schema = StructType([
 # META   "language_group": "synapse_pyspark"
 # META }
 
-# CELL ********************
-
-#temp...
-
-display(df_creds.collect()[0]["AZURE_CLIENT_SECRET"])
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
 # MARKDOWN ********************
 
 # #### Vault call
 
 # CELL ********************
 
+
+
+
 vault_url = "https://vaultforfabric.vault.azure.net/"
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=vault_url, credential=credential)
+
+
+
+
 
 api_key = client.get_secret("exhange-rate-host-api").value
 
